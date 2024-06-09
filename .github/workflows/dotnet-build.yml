@@ -1,27 +1,34 @@
-name: .NET Build Workflow
-on: [push]
+name: .NET CI
+
+on:
+  push:
+    branches:
+      - '*'  # Trigger para qualquer branch
+  pull_request:
+    branches:
+      - '*'  # Trigger para qualquer pull request
+  schedule:
+    - cron: '0 0 * * *'  # Executa diariamente à meia-noite
 
 jobs:
   build:
-    name: Build and Greet
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: '5.0.x' # Use the required .NET version
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.x'  # Especifique a versão do .NET que você está usando
 
-      - name: Install dependencies
-        run: dotnet restore
+    - name: Install dependencies
+      run: dotnet restore
 
-      - name: Build the project
-        run: dotnet build --configuration Release
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
 
-      - name: Greet the user
-        run: echo "Hello, ${MY_NAME}"
-        env:
-          MY_NAME: "Mona the Octocat"
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
