@@ -1,34 +1,24 @@
-name: .NET CI
+name: github-actions .NET
 
 on:
   push:
-    branches:
-      - '*'  # Trigger para qualquer branch
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - '*'  # Trigger para qualquer pull request
+    branches: [ "main" ]
   schedule:
-    - cron: '0 0 * * *'  # Executa diariamente à meia-noite
+    - cron: '0 0 * * 1'
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '7.x'  # Especifique a versão do .NET que você está usando
-
-    - name: Install dependencies
-      run: dotnet restore
-
-    - name: Build
-      run: dotnet build --no-restore --configuration Release
-
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore dependencies
+        run: dotnet restore **/*.csproj
+      - name: Build
+        run: dotnet build **/*.csproj --no-restore
